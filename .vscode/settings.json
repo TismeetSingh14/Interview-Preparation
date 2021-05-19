@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.ipynb": "python",
+        "iostream": "cpp",
+        "vector": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "Enabled"
+}
