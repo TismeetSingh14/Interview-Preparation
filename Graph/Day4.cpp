@@ -194,10 +194,115 @@ vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
 }
 
 // QUESTION 6
-// RECONSTRUCT ITINERARY
+// ARTICULATION POINT
+void dfsAP(vector<vector<Edge*>> &graph, vector<int> &disc, vector<int> &low, int src, vector<bool> &vis, vector<bool> &ans, int osrc, vector<int> &par, int &count) {
+
+    static int discTime = 0;
+    vis[src] = true;
+    disc[src] = low[src] = discTime;
+    discTime++;
+
+    for(Edge* e:graph[src]) {
+        if(par[src] == e->v)
+            continue;
+
+        if(vis[e->v] == true) {
+            low[src] = min(low[src], disc[e->v]);
+        }
+
+        else {
+            par[e->v] = src;
+            if(src == osrc)
+                count++;
+            dfsAP(graph, disc, low, e->v, vis, ans, osrc, par, count);
+            if(low[e->v] >= disc[src]) 
+                ans[src] = true;
+            low[src] = min(low[src], low[e->v]);
+        }
+    }
+}
+
+void articulationPoint(vector<vector<Edge*>> &graph) {
+    vector<bool> vis(graph.size(), 0);
+    vector<int> disc(graph.size(), 0);
+    vector<int> low(graph.size(), 0);
+    vector<int> par(graph.size(), -1);
+    vector<bool> ans(graph.size(), false);
+    int count = 0;
+    for(int i = 0; i < graph.size(); i++) {
+        if(vis[i] == false) {
+            dfsAP(graph, disc, low, i, vis, ans, i, par, count);
+            if(count < 2) 
+                ans[i] = false;
+        }
+    }
+
+    for(int i = 0; i < ans.size(); i++) 
+        if(ans[i])
+            cout << i << " ";
+}
+
+// QUESTION 7
+// DOCTOR STRANGE GFG
+void doctorAP(vector<vector<int>> &graph, vector<int> &disc, vector<int> &low, int src, vector<bool> &vis, int osrc, vector<int> &par, int &count, vector<bool> &ans) {
+
+    static int discTime = 0;
+    vis[src] = true;
+    disc[src] = low[src] = discTime;
+    discTime++;
+
+    for(int v:graph[src]) {
+        if(par[src] == v)
+            continue;
+
+        if(vis[v] == true) {
+            low[src] = min(low[src], disc[v]);
+        }
+
+        else {
+            par[v] = src;
+            if(src == osrc)
+                count++;
+            doctorAP(graph, disc, low, v, vis, osrc, par, count, ans);
+            if(low[v] >= disc[src])
+                ans[src] = true;
+            low[src] = min(low[src], low[v]);
+        }
+    }
+}
+
+int doctorStrange(vector<vector<int>> &edges, int n, int m) {
+    if(n < 3)
+        return 0;
+
+    vector<vector<int>> graph(n, vector<int>());
+
+    for(int i = 0; i < m; i++) {
+        graph[edges[i][0] - 1].push_back(edges[i][1] - 1);
+        graph[edges[i][1] - 1].push_back(edges[i][0] - 1);
+    }
+
+    vector<bool> vis(graph.size(), 0);
+    vector<int> disc(graph.size(), 0);
+    vector<int> low(graph.size(), 0);
+    vector<int> par(graph.size(), -1);
+    vector<bool> ans(graph.size(), false);
+    int count = 0;
+    int res = 0;
+
+    doctorAP(graph, disc, low, edges[0][0] - 1, vis, edges[0][0] - 1, par, count, ans);
+    if(count < 2)
+        ans[edges[0][0] - 1] = false;
+
+    for(int i = 0; i < ans.size(); i++) {
+        if(ans[i])
+            res++;
+    }
+    return res;
+}
 
 void solve() {
-    int n = 7;
+    int n = 8;
     vector<vector<Edge*>> graph(n,vector<Edge*>());
     addEdge(graph,0,1,0);
     addEdge(graph,1,2,0);
@@ -206,11 +311,15 @@ void solve() {
     addEdge(graph,3,4,0);
     addEdge(graph,4,5,0);
     addEdge(graph,5,6,0);
-    addEdge(graph,4,6,0);
+    addEdge(graph,7,6,0);
+    addEdge(graph,7,5,0);
 
-    topologicalMain(graph);
+    // topologicalMain(graph);
+    // articulationPoint(graph);
+    vector<vector<int>> a = {{1,2},{2,3},{2,4},{2,5},{3,6},{3,7}};
+    cout << doctorStrange(a, 7 ,6);
 }
 
 int main(int argc,char** argv) {
-
+    solve();
 }
