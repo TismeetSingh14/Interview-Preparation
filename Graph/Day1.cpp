@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <algorithm>
 using namespace std;
+#define pii pair<int, int>
 
 class Edge {
     public:
@@ -152,20 +153,86 @@ int numBusesToDestination(vector<vector<int>>& routes, int source, int target) {
     return -1;
 }
 
+// QUESTION 4
+// PRIMS ALGORITHM
+void primsAlgorithm(vector<vector<Edge*>>&graph, int src) {
+    priority_queue<pii,vector<pii>,greater<pii>> que;
+    vector<bool> vis(graph.size(), false);
+    int minWt = 0;
+    que.push({0, src});
+
+    while(que.size() != 0) {
+        int size = que.size();
+        while(size-->0) {
+            pii rp = que.top();
+            que.pop();
+
+            if(vis[rp.second] == false) {
+                minWt += rp.first;
+            }
+
+            vis[rp.second] = true;
+
+            for(Edge* e:graph[rp.second]) {
+                if(vis[e->v] == false) {
+                    que.push({e->w, e->v});
+                }
+            }
+        }
+    }
+
+    cout << minWt;
+}
+
+// QUESTION 6
+// DIJKSTRA ALGORITHM
+void dijkstraAlgorithm(vector<vector<Edge*>>&graph, int src) {
+    priority_queue<pii,vector<pii>,greater<pii>> que;
+    vector<bool> vis(graph.size(), false);
+    vector<int> dis(graph.size(), -1);
+    que.push({0, src});
+
+    while(que.size() != 0) {
+        int size = que.size();
+        while(size-->0) {
+            pii rp = que.top();
+            que.pop();
+
+            if(vis[rp.second] == false) {
+                dis[rp.second] = rp.first;
+            }
+
+            vis[rp.second] = true;
+
+            for(Edge* e:graph[rp.second]) {
+                if(vis[e->v] == false) {
+                    que.push({e->w + dis[rp.second], e->v});
+                }
+            }
+        }
+    }
+
+    for(int i:dis) {
+        cout << i << " ";
+    }
+}
+
 void solve() {
     int n = 7;
     vector<vector<Edge*>> graph(n,vector<Edge*>());
-    addEdge(graph,0,1,0);
-    addEdge(graph,1,2,0);
-    addEdge(graph,2,3,0);
-    addEdge(graph,0,3,0);
-    addEdge(graph,3,4,0);
-    addEdge(graph,4,5,0);
-    addEdge(graph,5,6,0);
-    addEdge(graph,4,6,0);
+    addEdge(graph,0,1,10);
+    addEdge(graph,1,2,10);
+    addEdge(graph,2,3,40);
+    addEdge(graph,0,3,10);
+    addEdge(graph,3,4,6);
+    addEdge(graph,4,5,7);
+    addEdge(graph,5,6,9);
+    addEdge(graph,4,6,8);
 
-    bfs(graph);
-    bipartite(graph);
+    // bfs(graph);
+    // bipartite(graph);
+    // primsAlgorithm(graph, 0);
+    // dijkstraAlgorithm(graph, 0);
 }
 
 int main(int argc, char** argv) {

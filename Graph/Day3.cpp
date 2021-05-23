@@ -5,6 +5,28 @@
 using namespace std;
 #define pii pair<int, int>
 
+class Edge {
+    public:
+    int v = -1;
+    int w = -1;
+
+    Edge() {
+
+    }
+
+    Edge(int v, int w) {
+        this->v = v;
+        this->w = w;
+    }
+};
+
+void addEdge(vector<vector<Edge*>> &graph,int u, int v, int w) {
+
+    graph[u].push_back(new Edge(v, w));
+    // TO MAKE THE GRAPH DIRECTED COMMENT THE BELOW LINE
+    graph[v].push_back(new Edge(u, w));
+}
+
 // QUESTION 1
 // WORD LADDER LEETCODE
 int ladderLength(string beginWord, string target, vector<string>& s) {
@@ -189,7 +211,54 @@ int slidingPuzzle(vector<vector<int>>& board) {
 
 // QUESTION 5
 // BELLMAN FORD ALGORITHM
+void bellmanFordAlgorithm(vector<vector<Edge*>> &graph ,int src) {
+    vector<int> dis(graph.size(), 1e9);
+    dis[src] = 0;
 
+    for (int i = 0; i < graph.size() - 1; i++) {
+        for (int j = 0; j < graph.size(); j++) {
+            for (Edge *e : graph[j]) {
+                int x = j;
+                int y = e->v;
+                int wgt = e->w;
+                if (dis[x] != 1e9 && dis[x] + wgt < dis[y])
+                    dis[y] = dis[x] + wgt;
+            }
+        }
+    }
+
+    for (int i = 0; i < graph.size(); i++) {
+        for (Edge *e : graph[i]) {
+            int x = i;
+            int y = e->v;
+            int wgt = e->w;
+            if (dis[x] != 1e9 && dis[x] + wgt < dis[y]) {
+                cout << "NEGATIVE CYCLE DETECTED" << endl;
+                break;
+            }
+        }
+    }
+
+    cout << "DISTANCES FROM SOURCE:";
+    for (int i = 0; i < graph.size(); i++)
+        cout << dis[i] << " ";
+}
+
+void solve() {
+    int n = 7;
+    vector<vector<Edge*>> graph(n,vector<Edge*>());
+    addEdge(graph,0,1,0);
+    addEdge(graph,1,2,0);
+    addEdge(graph,2,3,0);
+    addEdge(graph,0,3,0);
+    addEdge(graph,3,4,0);
+    addEdge(graph,4,5,0);
+    addEdge(graph,5,6,0);
+    addEdge(graph,4,6,0);
+
+    bellmanFordAlgorithm(graph, 0);
+
+}
 int main(int argc, char** argv) {
 
 }
