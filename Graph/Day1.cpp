@@ -184,7 +184,7 @@ void primsAlgorithm(vector<vector<Edge*>>&graph, int src) {
     cout << minWt;
 }
 
-// QUESTION 6
+// QUESTION 5
 // DIJKSTRA ALGORITHM
 void dijkstraAlgorithm(vector<vector<Edge*>>&graph, int src) {
     priority_queue<pii,vector<pii>,greater<pii>> que;

@@ -5,7 +5,9 @@
 #include <stack>
 #include <unordered_map>
 #include <algorithm>
+#include <list>
 using namespace std;
+#define pii pair<int, int>
 
 class Edge {
     public:
@@ -33,10 +35,92 @@ void addEdge(vector<vector<Edge*>> &graph,int u, int v, int w) {
 // CHEF AND REVERSING CODECHEF
 // DIJKSTRA'S ALGORITHM USING QUEUE
 // ALSO KNOWN AS 0-1 BFS
+int bfs01(vector<vector<Edge*>> &graph, int src, int des) {
+    list<pair<int, int>> que;
+    vector<bool> vis(graph.size(), false);
+    que.push_front({src, 0});
+    vector<int> dis(graph.size(), -1);
 
+    while(que.size() != 0) {
+        int size = que.size();
+        while(size-->0) {
+            pair<int, int> rp = que.front();
+            que.pop_front();
+
+            if(vis[rp.first] == false) {
+                dis[rp.first] = rp.second;
+            } 
+
+            vis[rp.first] = true;
+
+            for(Edge* e:graph[rp.first]) {
+                if(vis[e->v] == false) {
+                    if(e->w == 0) 
+                        que.push_front({e->v,rp.second + e->w});
+                    else
+                        que.push_back({e->v,rp.second + e->w});
+                }
+            }
+        }
+    }
+
+    return dis[graph.size() - 1];
+}
+
+void chefReverse(vector<vector<int>> &edges, int n) {
+    vector<vector<Edge*>> graph(n, vector<Edge*>());
+
+    for(int i = 0; i < edges.size(); i++) {
+        graph[edges[i][0]-1].push_back(new Edge(edges[i][1]-1, 0));
+        graph[edges[i][1]-1].push_back(new Edge(edges[i][0]-1, 1));
+    }
+
+    cout << bfs01(graph, 0, n-1);
+}
 
 // QUESTION 2
 // OPTIMIZE WATER DISTRIBUTION IN VILLAGE LEETCODE/LINTCODE
+int primsAlgorithm(vector<vector<Edge*>>&graph, int src) {
+    priority_queue<pii,vector<pii>,greater<pii>> que;
+    vector<bool> vis(graph.size(), false);
+    int minWt = 0;
+    que.push({0, src});
+
+    while(que.size() != 0) {
+        int size = que.size();
+        while(size-->0) {
+            pii rp = que.top();
+            que.pop();
+
+            if(vis[rp.second] == false) {
+                minWt += rp.first;
+            }
+
+            vis[rp.second] = true;
+
+            for(Edge* e:graph[rp.second]) {
+                if(vis[e->v] == false) {
+                    que.push({e->w, e->v});
+                }
+            }
+        }
+    }
+    return minWt;
+}
+
+int optimizeWaterDistributionInAVillage(vector<int> &wells, vector<vector<int>> &pipes, int n) {
+    vector<vector<Edge*>> graph(n+1, vector<Edge*>());
+
+    for(int i = 0; i < wells.size(); i++) {
+        addEdge(graph, 0, i + 1, wells[i]);
+    }
+
+    for(int i = 0; i < pipes.size(); i++) {
+        addEdge(graph, pipes[i][0], pipes[i][1], pipes[i][2]);
+    }
+
+    cout << primsAlgorithm(graph, 0);
+}
 
 // QUESTION 3
 // DFS
@@ -274,6 +358,13 @@ void solve() {
     addEdge(graph,4,5,0);
     addEdge(graph,5,6,0);
     addEdge(graph,4,6,0);
+
+    // vector<vector<int>> edges = {{1,2},{3,2},{6,2},{5,6},{7,5},{7,4},{3,4}};
+    // chefReverse(edges,7);
+
+    // vector<int> wells = {1,2,2,3,2};
+    // vector<vector<int>> pipes = {{1,2,1},{2,3,1},{4,5,7}};
+    // optimizeWaterDistributionInAVillage(wells, pipes,5);
 
 }
 

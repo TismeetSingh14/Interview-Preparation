@@ -29,19 +29,30 @@ void addEdge(vector<vector<Edge*>> &graph,int u, int v, int w) {
 
 // QUESTION 1
 // COLORING THE BORDER LEETCODE
-void dfs(vector<vector<int>> &grid, vector<vector<bool>> &vis, int sr, int sc) {
-    if(sr < 0 || sc < 0 || sr == grid.size() || sc == grid[0].size())
+void dfsColor(vector<vector<int>> &grid, vector<vector<bool>> &vis, int sr, int sc, int newCol, int oldCol) {
+    if(sr < 0 || sc < 0 || sr == grid.size() || sc == grid[0].size() || grid[sr][sc] != oldCol || vis[sr][sc])
         return;
-    
     vis[sr][sc] = true;
-    dfs(grid, vis, sr - 1, sc);
-    dfs(grid, vis, sr, sc + 1);
-    dfs(grid, vis, sr + 1, sc);
-    dfs(grid, vis, sr, sc - 1);
-}
-void coloringTheBorder(vector<vector<int>> &grid, int r0, int c0, int newCol) {
-    vector<vector<bool>> vis(grid.size(), vector<bool>(grid[0].size(), false));
+    bool isBorder = false;
+    if(sr == 0 || sc == 0 || sr == grid.size() - 1 || sc == grid[0].size() - 1 || grid[sr - 1][sc] != oldCol || grid[sr][sc + 1] != oldCol || grid[sr + 1][sc] != oldCol || grid[sr][sc - 1] != oldCol)
+        isBorder = true;
+    
+    dfsColor(grid, vis, sr - 1, sc, newCol, oldCol);
+    dfsColor(grid, vis, sr, sc + 1, newCol, oldCol);
+    dfsColor(grid, vis, sr + 1, sc, newCol, oldCol);
+    dfsColor(grid, vis, sr, sc - 1, newCol, oldCol);
 
+    if(isBorder == true) 
+        grid[sr][sc] = newCol;
+    
+}
+
+vector<vector<int>> colorBorder(vector<vector<int>>& grid, int r0, int c0, int newCol) {
+    if(grid[r0][c0] == newCol)
+        return grid;
+    vector<vector<bool>> vis(grid.size(), vector<bool>(grid[0].size(), false));
+    dfsColor(grid, vis, r0, c0, newCol, grid[r0][c0]);
+    return grid;
 }
 
 // QUESTION 2
@@ -245,7 +256,6 @@ void articulationPoint(vector<vector<Edge*>> &graph) {
 // QUESTION 7
 // DOCTOR STRANGE GFG
 void doctorAP(vector<vector<int>> &graph, vector<int> &disc, vector<int> &low, int src, vector<bool> &vis, int osrc, vector<int> &par, int &count, vector<bool> &ans) {
-
     static int discTime = 0;
     vis[src] = true;
     disc[src] = low[src] = discTime;
