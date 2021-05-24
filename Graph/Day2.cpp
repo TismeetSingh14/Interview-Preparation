@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <algorithm>
 #include <list>
+#include <unordered_set>
 using namespace std;
 #define pii pair<int, int>
 
@@ -135,6 +136,74 @@ void dfs(vector<vector<Edge*>> &graph, int src, vector<bool> &vis) {
 
 // QUESTION 4
 // EVALUATE DIVISION LEETCODE
+class Edge_ {
+    public:
+    string s;
+    double d;
+    Edge_(string s, double d) {
+        this->s = s;
+        this->d = d;
+    } 
+};
+
+double ans = 1.0;
+void dfs(unordered_map<string, vector<Edge_*>> &graph, string src, string des, unordered_map<string, bool> &vis, double &k) {
+    vis[src] = true;
+    if(src == des) {
+        ans = k;
+        return;
+    }
+    
+    for(Edge_* e:graph[src]) {
+        if(!vis[e->s]) {
+            k = k*e->d;
+            dfs(graph, e->s, des,  vis, k);
+            k = k/e->d;
+        }
+    }
+}
+
+vector<double> calcEquation(vector<vector<string>>& equations, vector<double>& values, vector<vector<string>>& queries) {
+    unordered_map<string, vector<Edge_*>> graph;
+    
+    for(int i = 0; i < equations.size(); i++) {
+        if(graph.find(equations[i][0]) == graph.end()) {
+            vector<Edge_*> arr;
+            graph[equations[i][0]] = arr;
+        }
+        
+        if(graph.find(equations[i][1]) == graph.end()) {
+            vector<Edge_*> arr;
+            graph[equations[i][1]] = arr;
+        }
+        graph[equations[i][0]].push_back(new Edge_(equations[i][1],values[i]));
+        graph[equations[i][1]].push_back(new Edge_(equations[i][0],(double)1/values[i]));
+    }
+    
+    
+    vector<double> a;
+    for(int i = 0; i < queries.size(); i++) {
+        if(graph.find(queries[i][0]) == graph.end() || graph.find(queries[i][1]) == graph.end()) {
+            a.push_back(-1);
+            continue;
+        }
+        if(queries[i][0] == queries[i][1]) {
+            a.push_back(1.000);
+            continue;
+        }
+        ans = 1.0;
+        double k = 1.0;
+        unordered_map<string, bool> vis;
+        dfs(graph, queries[i][0],queries[i][1], vis, k);
+        if(vis[queries[i][1]] == false) {
+            a.push_back(-1);
+            continue;
+        }
+        a.push_back(ans);
+    }
+    
+    return a;
+}
 
 // QUESTION 5
 // STRONGLY CONNECTED COMPONENTS (KOSARAJU'S ALGORTIHM) GFG
@@ -345,7 +414,35 @@ int numIslands(vector<vector<char>>& grid) {
 
 // QUESTION 10
 // NUMBER OF DISTINCT ISLANDS LEETCODE
+string dfsNODI(vector<vector<char>> &grid, int i, int j) {
+    string k = "";
+    if(i < 0 || j < 0 || i >= grid.size() || j >= grid[0].size() || grid[i][j] == '0') {
+        string s = "";
+        return s;
+    }
+    
+    grid[i][j] = '0';
+    k += dfsNODI(grid, i - 1, j) + 'U';
+    k += dfsNODI(grid, i, j + 1) + 'R';
+    k += dfsNODI(grid, i + 1, j) + 'D';
+    k += dfsNODI(grid, i, j - 1) + 'L';
 
+    k += 'Z';
+    return k;
+}
+
+void numIslandsDistinct(vector<vector<char>>& grid) {
+    unordered_set<string> st;
+    for(int i = 0; i < grid.size(); i++) {
+        for(int j = 0; j < grid[0].size(); j++) {
+            if(grid[i][j] == '1') {
+                string ans = dfsNODI(grid, i, j);
+                st.insert(ans);
+            }
+        }
+    }
+    cout << st.size();
+}
 
 void solve() {
     int n = 7;
@@ -365,6 +462,13 @@ void solve() {
     // vector<int> wells = {1,2,2,3,2};
     // vector<vector<int>> pipes = {{1,2,1},{2,3,1},{4,5,7}};
     // optimizeWaterDistributionInAVillage(wells, pipes,5);
+
+    vector<vector<char>> grid = {{'1','1','0','0','0','1'},
+                                {'1','0','0','0','0','1'},
+                                {'0','0','1','1','0','0'},
+                                {'0','0','0','1','0','0'},
+                                {'0','0','0','0','0','0'}};
+    numIslandsDistinct(grid);
 
 }
 
