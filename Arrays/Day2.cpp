@@ -147,6 +147,29 @@ int majorityElement(vector<int>& arr) {
 // MAJORITY ELEMENT II LEETCODE
 
 
+// QUESTION 9
+// MAJORITY ELEMENT GENERAL GFG
+
+// QUESTION 10
+// MAX CHUNKS TO MAKE ARRAY SORTED
+int maxChunks(vector<int> &arr) {
+    int num = 0;
+    int maxEle = -1;
+    for(int i = 0; i < arr.size(); i++) {
+        maxEle = max(maxEle, arr[i]);
+        if(maxEle == i)
+            num++;
+    }
+
+    return num;
+}
+
+// QUESTION 11
+// MAX CHUNKS TO MAKE ARRAY SORTED II LEETCODE
+int maxChunksII(vector<int> &arr) {
+    
+}
+
 int main(int argc, char** argv) {
     
 }
