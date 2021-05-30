@@ -184,6 +184,18 @@ void buildTreeFromPreorderAndPostorder() {
     display(root);
 }
 
+// OPTIMIZED METHOD FOR BUILDING TREE FROM PRE AND POST
+int preIndex = 0, posIndex = 0;
+Node* constructFromPrePost(vector<int>& pre, vector<int>& post) {
+    Node* root = new Node(pre[preIndex++]);
+    if (root->val != post[posIndex])
+        root->left = constructFromPrePost(pre, post);
+    if (root->val != post[posIndex])
+        root->right = constructFromPrePost(pre, post);
+    posIndex++;
+    return root;
+}
+
 // QUESTION 6
 // TO SERIALIZE AND DESERIALIZE A BINARY TREE
 void serialize_(Node* root, ostringstream& k) {
