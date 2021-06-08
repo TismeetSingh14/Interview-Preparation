@@ -58,6 +58,76 @@ void merge(vector<int> &par, vector<int> &rank, int x, int y) {
     }
 }
 
+// QUESTION 1
+// MINIMUM SWAPS REQUIRED TO MAKE TWO ARRAYS EQUAL GFG
+int minSwapsToEqual(vector<int> &a, vector<int> &b) {
+    unordered_map<int,int> map;
+    for(int i = 0; i < b.size(); i++)
+        map[b[i]] = i;
+    
+    vector<bool> vis(map.size(), false);
+    int ans = 0;
+    int i = 0;
+    while(i < a.size()) {
+        if(map[a[i]] != i && vis[i] == false) {
+            int j = i;
+            int cycle = 0;
+            while(vis[j] != true) {
+                vis[j] = true;
+                cycle += 1;
+                j = map[a[j]];
+            }
+            
+            ans += cycle - 1;
+        } 
+        i++;
+    }
+
+    return ans;
+}
+
+// QUESTION 2
+// BRICKS FALLING WHEN HIT LEETCODE
+
+
+// QUESTION 3
+// ALIEN DICTIONARY GFG/LEETCODE
+void topologicalSort(unordered_map<char, vector<char>> &graph, unordered_map<char,bool> &vis, vector<char> &stack, char src) {
+    vis[src] = true;
+
+    for(char ch : graph[src]) {
+        if(vis[ch] == false)
+            topologicalSort(graph, vis, stack, ch);
+    }
+
+    stack.push_back(src);
+}
+vector<char> alienDictionary(vector<string> &words, int noAlpha) {
+    unordered_map<char,vector<char>> graph;
+
+    for(int i = 0; i < words.size() - 1; i++) {
+        string word1 = words[i];
+        string word2 = words[i + 1];
+
+        for(int j = 0; j < min(word1.length(), word2.length()); j++) {
+            if(word1[j] != word2[j]) {
+                graph[word1[i]].push_back(word2[j]);
+                break;
+            }
+        }
+    }
+
+    vector<char> stack;
+    unordered_map<char,bool> vis;
+    topologicalSort(graph, vis, stack, words[0][0]);
+    reverse(stack.begin(), stack.end());
+    return stack;
+}
+
+// QUESTION 4
+// LARGEST COLOR VALUE IN A DIRECTED GRAPH LEETCODE
+
+
 // QUESTION 5
 // SWIM IN RISING WATER LEETCODE
 int swimInWater(vector<vector<int>>& h) {
@@ -92,6 +162,55 @@ int swimInWater(vector<vector<int>>& h) {
     }
     
     return -1;
+}
+
+// QUESTION 6
+// SHORTEST DISTANCE FROM ALL BUILDINGS LEETCODE/LINTCODE
+int bfs(vector<vector<int>> &grid, int i, int j) {
+    vector<vector<bool>> vis(grid.size(), vector<bool> (grid[0].size(), false));
+    queue<pair<int,int>> que;
+    que.push({i,j});
+    vis[i][j] = true;
+    vector<vector<int>> dir= {{0,1},{1,0},{0,-1},{-1,0}};
+
+    int ans = 0;
+    while(que.size() != 0) {
+        
+        pair<int,int> p = que.front();
+        que.pop();
+
+        for(int d = 0; d < 4; d++) {
+            int x = p.first + dir[d][0];
+            int y = p.second + dir[d][1];
+
+            if(x < 0 || y < 0 || x >= grid.size() || y >= grid[0].size() || vis[x][y] == true || grid[x][y] == 2)
+                continue;
+            
+            if(grid[x][y] == 1) {
+                ans+= abs(x - i) + abs(y - j);
+                vis[x][y] = true;
+                continue;
+            }
+
+            vis[x][y] = true;
+            que.push({x,y});
+        }
+    } 
+    cout << endl;
+
+    return ans;
+}
+int shortestDistance(vector<vector<int>> &grid) {
+    int a = 1e9;
+    for(int i = 0; i < grid.size(); i++) {
+        for(int j = 0; j < grid[0].size(); j++) {
+            if(grid[i][j] == 0) {
+                a = min(bfs(grid, i, j), a);
+            }
+        }
+    }
+
+    return a;
 }
 
 // QUESTION 7
@@ -171,8 +290,21 @@ void solve() {
     addEdge(graph,4,5,0);
     addEdge(graph,5,6,0);
     addEdge(graph,4,6,0);
+
+    // vector<int> a = {3,6,4,8};
+    // vector<int> b = {4,6,8,3};
+    // cout << minSwapsToEqual(a,b);
+
+    // vector<string> words =  {"caa", "aaa", "aab"};
+    // vector<char> a = alienDictionary(words, 3);
+    // for(char ch : a) {
+    //     cout << ch << " ";
+    // }
+
+    vector<vector<int>> grid = {{1,0,2,0,1},{0,0,0,0,0},{0,0,1,0,0}};
+    cout << shortestDistance(grid);
 }
 
 int main(int argc, char** argv) {
-
+    solve();
 }

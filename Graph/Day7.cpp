@@ -230,9 +230,8 @@ void solve() {
     addEdge(graph,4,6,0);
 
     // maxFlowSolve();
-    vector<int> arr = {4,5,2,1,3};
-    cout << minSwaps(arr);
-
+    // vector<int> arr = {4,5,2,1,3};
+    // cout << minSwaps(arr);
 }
 
 int main(int argc, char** argv) {
