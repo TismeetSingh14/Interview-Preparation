@@ -2,6 +2,7 @@
 #include <vector>
 #include <unordered_map>
 #include <queue>
+#include <set>
 using namespace std;
 #define ppi pair<int,pair<int,int>>
 
@@ -70,6 +71,125 @@ int trapRainWater(vector<vector<int>>& heightMap) {
     return res;   
 }
 
-int main(int argc, char** argv) {
+// QUESTION 3
+// COUNT PAIRS WHOSE SUM IS DIVISIBLE BY K GFG
+int divisiblePairs(vector<int> &arr, int k) {
+    unordered_map<int,int> m;
+    int ans = 0;
 
+    for(int i = 0; i < arr.size(); i++) {
+        int val = arr[i]%k;
+
+        if(val == 0)
+            ans += m[val];
+
+        else 
+            ans += m[k - val];
+
+        m[val]++;
+    }
+
+    return ans;
+}
+
+// QUESTION 4
+// LENGTH OF LARGEST SUBARRAY WITH CONTIGUOUS ELEMENTS I GFG
+int largestContiguousSubarr(vector<int> &arr) {
+    int len = 1;
+    int maxVal = -1e8;
+    int minVal = 1e8;
+
+    for(int i = 0; i < arr.size(); i++) {
+        maxVal = arr[i];
+        minVal = arr[i];
+        for(int j = i + 1; j < arr.size(); j++) {
+            maxVal = max(maxVal, arr[j]);
+            minVal = min(minVal, arr[j]);
+
+            int gap = maxVal - minVal + 1;
+            if(j - i + 1 == gap) {
+                len = max(len,j - i + 1);
+            }
+        }
+    }
+
+    return len;
+}
+
+// QUESTION 5 
+// LENGTH OF LARGEST SUBARRAY WITH CONTIGUOUS ELEMENTS II (WITH DUPLICATE ELEMENTS) GFG
+int largestContiguousSubarrII(vector<int> &arr) {
+    int len = 1;
+    int maxVal = -1e8;
+    int minVal = 1e8;
+
+    for(int i = 0; i < arr.size(); i++) {
+        maxVal = arr[i];
+        minVal = arr[i];
+        set<int> vis;
+        vis.insert(arr[i]);
+        for(int j = i + 1; j < arr.size(); j++) {
+            if(vis.find(arr[j]) != vis.end())
+                break;
+            vis.insert(arr[j]);
+            maxVal = max(maxVal, arr[j]);
+            minVal = min(minVal, arr[j]);
+
+            int gap = maxVal - minVal + 1;
+            if(j - i + 1 == gap) {
+                len = max(len,j - i + 1);
+            }
+        }
+    }
+
+    return len;
+}
+
+// QUESTION 6
+// FIND THE SMALLEST NUMBER N WHOSE DIGITS MULTILY TO A GIVEN NUMBER N GFG
+
+// QUESTION 7
+// CHECK IF FREQUENCY OF ALL CHARACTERS CAN BECOME SAME BY ONE REMOVAL GFG
+
+// QUESTION 8 
+// INSERT DELETE GETRANDOM O(1) LEETCODE
+class RandomizedSet {
+public:
+    unordered_map<int,int> m;
+    vector<int> k;
+    RandomizedSet() {
+    }
+    
+    bool insert(int val) {
+        if(m.find(val) != m.end())
+            return false;
+        k.push_back(val);
+        m[val] = k.size() - 1;
+        
+        return true;
+    }
+    
+    bool remove(int val) {
+        if(m.find(val) == m.end())
+            return false;
+        int remIdx = m[val];
+        int lastEle = k[k.size() - 1];
+        m[lastEle] = remIdx;
+        k[remIdx] = lastEle;
+        k.pop_back();
+        m.erase(val);
+        return true;
+        
+    }
+    
+    int getRandom() {
+        return k[rand() % k.size()];
+    }
+};
+
+int main(int argc, char** argv) {
+    // vector<int> arr = {10,12,12,10,11,10};
+    // cout << divisiblePairs(arr, 3);
+    // cout << largestContiguousSubarr(arr);
+    // cout << largestContiguousSubarrII(arr);
 }
