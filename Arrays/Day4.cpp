@@ -199,7 +199,7 @@ vector<int> wiggleSort(vector<int> &arr) {
 
 
 // QUESTION 9
-// FIND THE NUMBER OF JUMSP TO REACH X IN THE NUMBER LINE FROM ZERO GFG
+// FIND THE NUMBER OF JUMPS TO REACH X IN THE NUMBER LINE FROM ZERO GFG
 int minSteps(int x) {
     int i = 0;
     int sum = 0;

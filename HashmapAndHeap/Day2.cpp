@@ -2,6 +2,7 @@
 #include <vector>
 #include <unordered_map>
 #include <queue>
+#include <algorithm>
 using namespace std;
 
 // QUESTION 1
@@ -68,6 +69,16 @@ int maxDrink(vector<int> &arr) {
 }
 
 // QUESTION 3
+// X OF A KIND IN A DECK LEETCODE
+bool hasGroupsSizeX(vector<int>& deck) {
+    unordered_map<int, int> count;
+    int res = 0;
+    for (int i : deck) count[i]++;
+    for (auto i : count) res = __gcd(i.second, res);
+    return res > 1;
+}
+
+// QUESTION 4
 // 
 
 int main(int argc, char** argv) {

@@ -183,7 +183,7 @@ public:
     }
     
     int getRandom() {
-        return k[rand() % k.size()];
+        return k[rand() % k.size()]; 
     }
 };
 
